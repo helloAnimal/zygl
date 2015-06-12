@@ -1,0 +1,5 @@
+init-createDB.sql
+init-schema.sql
+init-data.sql
+以三个文件只在部署系统的时候初始化一次;
+hot-fix.sql

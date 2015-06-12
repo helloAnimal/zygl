@@ -1,0 +1,44 @@
+﻿0.控制台日志输出，日志文件；
+1.单独人员登陆已经没有问题；
+2.人员角色；暂时不做；
+3.人员权限；暂时不做；
+
+
+
+5.存储密码的时候使用String password = new Md5Hash(currUser.getPassword()).toString();加密下密码
+6.初始化密码202cb962ac59075b964b07152d234b70  对应 123
+		// 加密使用下面的方法即可
+		// String password = new Md5Hash(currUser.getPassword()).toString();
+		// logger.info("加密过后的密码：" + password);
+
+7.springMVC 返回json问题
+
+2015-4-24
+继承dao类；
+树表；
+
+2015年4月28日
+1.省市插件
+2.MySQL编号
+3.Mysql工具
+4.jQuery 提示插件
+
+2015年5月2日
+1.hibernate动态查询底层封装
+
+2015年5月10日
+1.省市下拉框
+
+2015年5月17日
+1.当前位置
+2.菜单顺序
+3.日志管理
+
+2015年5月21日
+2015年6月6日
+使用rose设计
+
+
+
+
+

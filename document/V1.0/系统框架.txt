@@ -1,0 +1,10 @@
+采用springMVC+shiro
+MySQL
+hibernate
+easyUI
+
+参考：
+http://www.sucaihuo.com/modals/demo/53/%d2%bd%d4%ba%ba%f3%cc%a8%c8%ab%cc%d7%cd%f8%d5%be%c4%a3%b0%e5/html/index.htm
+
+
+

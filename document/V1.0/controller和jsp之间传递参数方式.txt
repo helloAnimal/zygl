@@ -1,0 +1,46 @@
+一、controller 到 jsp
+①addAttribute(value)
+会将类型名的首字母改成小写后，作为键值名传递过去
+jsp上用${string}
+
+②复合类对象
+model.addAttribute(new User("my姓名","我的爱好有游泳打球"))
+User类对象，页面上用${user}得到该对象，用${user.propertyName}得到其属性，这是用 Model的一大优势。
+@RequestMapping(value="/say")
+     public String say(@RequestParam int id,Model model) {
+          System.out.println("say");
+          model.addAttribute("hello", "value");
+          //使用Object的类型作为key,String-->string
+          model.addAttribute("ok");
+          return "hello";
+     }
+
+
+二.jsp到controller
+①简单类型，如int, String
+方法的参数直接写String name。
+例如：
+       @RequestMapping("hello3")
+       public String hello3( @RequestParam("name" ) String name,
+                               @RequestParam("hobby" ) String hobby){
+            System. out.println("name=" +name);
+            System. out.println("hobby=" +hobby);      
+             return "hello" ;
+       }
+但这样就要求输入里面必须有这两个参数了，可以用required=false来取消，例如：
+@RequestParam(value="name",required=false) String name
+但经测试也可以完全不写这些注解，即方法的参数写String name，效果与上面相同。
+
+②对象类型
+对象类型：
+       @RequestMapping("/hello4" )
+       public String hello4(User user){
+            System.out.println("user.getName()=" +user.getName());
+            System.out.println("user.getHobby()=" +user.getHobby());
+            return "hello";
+      }
+ 
+Spring MVC会按：
+     “HTTP请求参数名=  命令/表单对象的属性名”的规则自动绑定请求数据，支持“级联属性名”，自动进行基本类型数据转换。
+注意：struts2 如果 jsp 传的参数为  user.name 在action端会自动匹配到user这个实体里面；
+	但是使用spring MVC 则不会自动匹配,反而回去找所有有name的参数,将值放入其中；

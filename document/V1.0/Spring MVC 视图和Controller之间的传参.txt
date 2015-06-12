@@ -1,0 +1,100 @@
+Spring MVC3在controller和视图之间传递参数的方法：
+ 
+一, 从controller往视图传递值，controller---->视图
+ 
+1）简单类型，如int, String，直接写在controller方法的参数里，是无法传递到视图页面上的（经测试）。
+ 
+（而用@RequestParam("name")注解，可以从视图上，或地址中加?name=***传递到controller方法里）
+ 
+2）可以用Map<String, Object>，其键值可以在页面上用EL表达式${键值名}得到，
+ 
+3）也可以用Model类对象来传递，有addAttribute(key, value)方法，其键值可以在页面上用EL表达式${键值名}得到，
+ 
+如果用addAttribute(value)这个方法，会将类型名的首字母改成小写后，作为键值名传递过去，例如"ok"在页面上用${string} 得到，而一个复合类对象，如User类对象，页面上用${user}得到该对象，用${user.propertyName}得到其属性，这是用 Model的一大优势。
+例如，model.addAttribute(new User("my姓名","我的爱好有游泳打球"));
+这样页面上就能用${user.name}和${user.hobby}打印对应属性
+ 
+     @RequestMapping(value={"/","/hello"})
+     public String hello(int id,Map<String,Object> map) {
+          System.out.println(id);
+          System.out.println("hello");
+          map.put("hello", "world");
+          return "hello";
+     }
+   
+     @RequestMapping(value="/say")
+     public String say(@RequestParam int id,Model model) {
+          System.out.println("say");
+          model.addAttribute("hello", "value");
+          //使用Object的类型作为key,String-->string
+          model.addAttribute("ok");
+          return "hello";
+     } www.2cto.com
+ 
+二，从视图向controller传递值，  controller <--- 视图
+ 
+1）简单类型，如int, String, 应在变量名前加@RequestParam注解，
+例如：
+       @RequestMapping("hello3")
+       public String hello3( @RequestParam("name" ) String name,
+                               @RequestParam("hobby" ) String hobby){
+            System. out.println("name=" +name);
+            System. out.println("hobby=" +hobby);      
+             return "hello" ;
+      }
+但这样就要求输入里面必须有这两个参数了，可以用required=false来取消，例如：
+@RequestParam(value="name",required=false) String name
+但经测试也可以完全不写这些注解，即方法的参数写String name，效果与上面相同。
+ 
+2）对象类型：
+       @RequestMapping("/hello4" )
+       public String hello4(User user){
+            System.out.println("user.getName()=" +user.getName());
+            System.out.println("user.getHobby()=" +user.getHobby());
+            return "hello";
+      }
+ 
+Spring MVC会按：
+     “HTTP请求参数名=  命令/表单对象的属性名”
+    的规则自动绑定请求数据，支持“级联属性名”，自动进行基本类型数据转换。
+ 
+即有一个User类，如下
+package model;
+ 
+public class User {
+       private String name ;
+       private String hobby ;
+       public User(){
+           
+      }
+       public User(String name, String hobby) {
+             this.name = name;
+             this.hobby = hobby;
+      }
+//...get/set方法略 
+ 
+则页面上可以用
+<form name="form1" action="hello4" method="post">
+     <input type="text" name="name"/>
+     <input type="text" name="hobby"/>
+...
+提交后，把值直接绑定到user对象上。
+ 
+此外，还可以限定提交方法为POST，即修改方法的@RequestMapping注解为
+@RequestMapping(value="/hello4",method=RequestMethod.POST)
+ 
+最后，注意，如果这里提交过来的字符出现乱码，应该在web.xml里加入如下filter:
+ 
+<filter>
+   <filter-name>encodingFilter</filter-name>
+   <filter-class>org.springframework.web.filter.CharacterEncodingFilter </filter-class>
+   <init-param>
+      <param-name>encoding</param-name>
+      <param-value>utf8</param-value>
+   </init-param>
+</filter>
+ 
+<filter-mapping>
+   <filter-name>encodingFilter</filter-name >
+   <url-pattern>/*</url-pattern>
+</filter-mapping>
